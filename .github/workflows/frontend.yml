@@ -1,0 +1,56 @@
+# 브랜치 전략 연습용 (BRANCHING.md) — backend.yml 과 같은 흐름
+name: frontend
+
+on:
+  push:
+    branches: [develop, "release/**", main]
+    tags: ["v*"]
+  pull_request:
+    branches: [develop, "release/**", main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        # package-lock.json 을 커밋하면 npm ci 로 고정 설치
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Typecheck & build
+        run: npm run build
+
+      - name: Image tag
+        id: tag
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=$(date +%Y%m%d)-${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Docker build (push 없음 — Dockerfile 검증용)
+        if: github.event_name == 'push'
+        run: docker build -t aibms-frontend:${{ steps.tag.outputs.tag }} .
+
+  deploy:
+    needs: build
+    if: >-
+      github.event_name == 'push' && (
+        github.ref == 'refs/heads/develop' ||
+        startsWith(github.ref, 'refs/heads/release/') ||
+        startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'prod' || (startsWith(github.ref, 'refs/heads/release/') && 'stag' || 'dev') }}
+    steps:
+      - name: Deploy (시뮬레이션)
+        run: |
+          echo "이미지 태그: ${{ needs.build.outputs.tag }}"
+          echo "실제 배포라면: 이미지 push → aibms-deploy overlays/<환경> 태그 갱신 → ArgoCD 동기화"

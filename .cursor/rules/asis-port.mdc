@@ -1,0 +1,18 @@
+---
+description: ASIS(기존 시스템) 기능을 분석하거나 TOBE 로 옮길 때 따르는 절차. ASIS, 이관, 마이그레이션, 현행 분석 요청에 사용
+alwaysApply: false
+---
+
+원본: aibms-backend 레포 `README.md` "ASIS 기능을 옮기는 순서"
+
+- ASIS 소스 위치: 각자 PC 의 ASIS 소스 폴더 (예: `D:\20261106_소스`). 프론트 `base-front`·`its-front`·`platform-front`, 백엔드 `base-biz-*`·`its-biz-*` 등.
+- 분석은 화면 → 호출 API → 백엔드 구현 순서로 따라간다. 근거는 `파일:라인` 으로 적고, DB·외부 라이브러리(npm `mis-global-component` 등)에만 있어 소스에서 안 보이는 것은 "확인 못 함"으로 둔다.
+- 옮기는 순서
+  1. `model` — ASIS Entity 필드 (JPA 어노테이션 제외)
+  2. `repository` — JpaRepository 메서드·`@Query` → MyBatis SQL
+  3. `service/XxxService` — ASIS `XxxLogic` 메서드
+  4. `dto`·`rest` — URL·응답은 소통규약(`/api/v1/...`, 목록 PagedModel)에 맞추고 `@Tag`·`@ApiDoc`
+  5. ASIS 가 다른 서비스 Feign 을 쓰면 → TOBE 다른 업무면 `client/{업무}`, 외부 시스템이면 `external`
+- ASIS 의 문제를 고쳐서 옮길 때는 클래스 Javadoc 에 "ASIS 와 다른 점:" 으로 적고, ASIS 근거(`파일:라인`)를 함께 단다.
+- ASIS 의 하드코딩 값(비밀키·고정 토큰·IP 등)은 그대로 옮기지 않고 설정값·환경변수로 바꾼다.
+- ASIS 의 코드값(분류체계 id, `…_RCID`)은 TOBE 에서 코드 문자열로 둔다 (공통코드 모듈 확정 전 가안).

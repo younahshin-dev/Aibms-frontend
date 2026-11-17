@@ -1,0 +1,14 @@
+---
+description: 프론트엔드 규칙 (React 18 + TypeScript + Vite)
+globs: src/**
+alwaysApply: false
+---
+
+원본: `README.md` "규칙"
+
+- API 호출·인증 헤더·에러 처리는 `src/api/http.ts` 한 곳에서만. 컴포넌트에서 fetch·axios 를 직접 쓰지 않는다.
+- 로그인 응답은 localStorage 한 키(`aibms-login`, `src/api/session.ts`)에 저장. 모든 호출에 `Authorization`·`RefreshAuthorization` 헤더.
+- 401 이면 토큰을 지우고 다시 로그인 (갱신하지 않음).
+- 목록 응답은 `_embedded.{리소스}` + `page`, 에러는 `{code, message, detail.fieldErrors, traceId}`. 0건이면 `_embedded` 가 없다.
+- API 타입은 손으로 쓰지 않고 OpenAPI 로 생성 (`npm run gen:api` → `src/api/generated/schema.d.ts`).
+- 환경값은 런타임 `config.json` 에서 읽는다. 환경별로 따로 빌드하지 않는다.

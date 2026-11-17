@@ -1,0 +1,7 @@
+{
+  "apiBaseUrl": "",
+  "environment": "local",
+  "loginMethods": ["TEMP"],
+  "tempLoginPasswordRequired": true,
+  "okta": { "issuer": "", "clientId": "", "redirectUri": "" }
+}
