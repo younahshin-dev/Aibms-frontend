@@ -21,4 +21,4 @@ Cursor·Claude Code 등 AI 에이전트가 이 레포에서 작업할 때 지키
 2. 추측하지 않는다. ASIS 동작은 소스에서 확인한 것만 사실로 쓰고 `파일:라인` 근거를 단다. 확인 못 한 것은 "확인 못 함"이라고 적는다.
 3. 비밀값(비밀번호·키·토큰)을 코드·설정·커밋에 넣지 않는다. 환경변수로 받고 aibms-deploy 레포 `secrets/aibms-secrets.example.yaml` 에 키 이름만 추가한다.
 4. 바꾼 뒤에는 검증한다: `npm run build`. 실패를 숨기지 않는다.
-5. 커밋·푸시는 사람이 요청할 때만 한다. `main`·`develop` 에 직접 푸시하지 않는다 (`BRANCHING.md`). 커밋 메시지 예: `feat: 로그인 화면`.
+5. 커밋·푸시는 사람이 요청할 때만 한다. 작업은 각자 `feature/<name>` 브랜치 하나에서 하고 `develop` 으로 PR(Squash and merge)한다. `main`·`develop` 에 직접 커밋하지 않는다. 커밋 메시지는 `<type>: <summary> (#issue)` (`BRANCHING.md`).
