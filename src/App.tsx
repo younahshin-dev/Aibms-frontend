@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './auth/AuthProvider';
 import { LoginPage } from './auth/LoginPage';
 import { EnvBanner } from './components/Banners';
+import { runtimeConfig } from './config/runtimeConfig';
+import { HistoryTest } from './history/HistoryTest';
 import { MockApiDemo } from './mock/MockApiDemo';
 
 // 껍데기: 업무 화면 자리. 지금은 목업 API 연동 확인 화면을 띄운다.
@@ -15,6 +18,7 @@ export function App() {
 
 function Shell() {
   const { session, logout } = useAuth();
+  const [view, setView] = useState<'mock' | 'history'>('mock');
   if (!session) {
     return <LoginPage />;
   }
@@ -26,6 +30,11 @@ function Shell() {
           <span className="ic">📊</span>aibms · New MIS
         </span>
         <span className="sp" />
+        {runtimeConfig().environment !== 'prod' && (
+          <button type="button" className="btn sm" onClick={() => setView(view === 'mock' ? 'history' : 'mock')}>
+            {view === 'mock' ? '이력 시험' : '목업 API'}
+          </button>
+        )}
         <span className="who">
           <b>{member.name}</b> ({session.user.loginId}) · {session.displayRoles}
         </span>
@@ -52,7 +61,7 @@ function Shell() {
         </span>
       </div>
       <main className="wrap">
-        <MockApiDemo />
+        {view === 'mock' ? <MockApiDemo /> : <HistoryTest />}
       </main>
     </>
   );
