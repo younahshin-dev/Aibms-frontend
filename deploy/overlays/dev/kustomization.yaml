@@ -1,0 +1,22 @@
+# dev: develop 브랜치 merge 시 CI 가 newTag 를 자동 갱신
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aibms-dev
+
+resources:
+  - ../../base
+
+images:
+  - name: aibms-frontend
+    newName: <AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/aibms-frontend
+    newTag: latest-dev   # CI 가 갱신
+
+patches:
+  - target:
+      kind: Ingress
+      name: aibms-frontend
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: aibms-dev.example.invalid   # TODO 도메인 발급 대기 (aibms-backend · aibms-frontend 가 같은 값)

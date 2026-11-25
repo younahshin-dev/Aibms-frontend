@@ -5,6 +5,8 @@ on:
   push:
     branches: [develop, "release/**", main]
     tags: ["v*"]
+    # 배포 설정(이미지 태그 갱신 등)만 바뀐 커밋은 다시 빌드하지 않는다
+    paths-ignore: ["deploy/**"]
   pull_request:
     branches: [develop, "release/**", main]
 
@@ -53,4 +55,4 @@ jobs:
       - name: Deploy (시뮬레이션)
         run: |
           echo "이미지 태그: ${{ needs.build.outputs.tag }}"
-          echo "실제 배포라면: 이미지 push → aibms-deploy overlays/<환경> 태그 갱신 → ArgoCD 동기화"
+          echo "실제 배포라면: 이미지 push → deploy/overlays/<환경> 태그 갱신 → ArgoCD 동기화"

@@ -1,0 +1,39 @@
+# local: minikube 전용. 실행: aibms-backend 레포 deploy/overlays/local/README.md
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aibms-local
+
+resources:
+  - ../../base
+
+images:
+  - name: aibms-frontend
+    newTag: local
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: aibms-frontend-config
+    patch: |-
+      - op: replace
+        path: /data/APP_ENV
+        value: local
+  # 이미지는 minikube image load 로 넣는다. 레지스트리에서 받지 않는다
+  - target:
+      kind: Deployment
+      name: aibms-frontend
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Never
+  # 호스트 조건을 없애 port-forward 한 localhost 로 접속한다
+  - target:
+      kind: Ingress
+      name: aibms-frontend
+    patch: |-
+      - op: add
+        path: /spec/ingressClassName
+        value: nginx
+      - op: remove
+        path: /spec/rules/0/host

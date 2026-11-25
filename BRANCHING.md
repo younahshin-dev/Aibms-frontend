@@ -1,6 +1,6 @@
 # 브랜치 전략
 
-출처: GitHub 협업 가이드 "7. 브랜치와 커밋" (2026-11-18 반영). aibms 레포 4개(frontend · backend · aiagent · deploy)가 같은 규칙을 쓴다.
+출처: GitHub 협업 가이드 "7. 브랜치와 커밋" (2026-11-18 반영). aibms 레포 3개(frontend · backend · aiagent)가 같은 규칙을 쓴다.
 
 ## 브랜치
 

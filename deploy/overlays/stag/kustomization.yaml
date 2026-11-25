@@ -1,0 +1,29 @@
+# stag: release/* 이미지 태그를 PR 로 갱신
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aibms-stag
+
+resources:
+  - ../../base
+
+images:
+  - name: aibms-frontend
+    newName: <AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/aibms-frontend
+    newTag: TODO
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: aibms-frontend-config
+    patch: |-
+      - op: replace
+        path: /data/APP_ENV
+        value: stag
+  - target:
+      kind: Ingress
+      name: aibms-frontend
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: aibms-stag.example.invalid   # TODO 도메인 발급 대기 (aibms-backend · aibms-frontend 가 같은 값)

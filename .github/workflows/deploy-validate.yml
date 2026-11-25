@@ -1,0 +1,18 @@
+# 배포 설정 검증: 각 overlay 가 Kustomize 로 정상 렌더링되는지 확인
+name: deploy-validate
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+
+jobs:
+  kustomize:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        overlay: [local, local-dev, dev, stag, prod]
+    steps:
+      - uses: actions/checkout@v4
+      - name: kustomize build deploy/overlays/${{ matrix.overlay }}
+        run: kubectl kustomize deploy/overlays/${{ matrix.overlay }} > /dev/null

@@ -1,0 +1,57 @@
+# ArgoCD 직접 설치 후 등록할 Application (이 레포 것만, 환경별 1개). prod 는 자동 동기화하지 않는다 (수동 Sync = 배포 승인)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aibms-frontend-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: <GIT_URL>/aibms-frontend.git   # TODO
+    targetRevision: main
+    path: deploy/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: aibms-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aibms-frontend-stag
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: <GIT_URL>/aibms-frontend.git   # TODO
+    targetRevision: main
+    path: deploy/overlays/stag
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: aibms-stag
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aibms-frontend-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: <GIT_URL>/aibms-frontend.git   # TODO
+    targetRevision: main
+    path: deploy/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: aibms-prod
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
