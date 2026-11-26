@@ -1,0 +1,25 @@
+# local-dev: 실행은 aibms-backend 레포 deploy/overlays/local-dev/README.md
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aibms-devtest
+
+resources:
+  - ../local
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: aibms-frontend-config
+    patch: |-
+      - op: replace
+        path: /data/APP_ENV
+        value: dev
+  # aibms-local 의 Ingress 와 겹치지 않게 호스트로 나눈다
+  - target:
+      kind: Ingress
+      name: aibms-frontend
+    patch: |-
+      - op: add
+        path: /spec/rules/0/host
+        value: aibms-dev.localhost

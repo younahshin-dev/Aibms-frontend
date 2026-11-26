@@ -1,5 +1,5 @@
 #!/bin/sh
-# 컨테이너 기동 시 환경변수 → /usr/share/nginx/html/config.json (aibms-deploy overlay 에서 값 주입)
+# 컨테이너 기동 시 환경변수 → /usr/share/nginx/html/config.json (deploy/overlays 에서 값 주입)
 set -e
 cat > /usr/share/nginx/html/config.json <<EOF
 {

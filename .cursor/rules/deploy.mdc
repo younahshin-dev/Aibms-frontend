@@ -1,0 +1,14 @@
+---
+description: 배포 매니페스트(Kustomize)와 Secret 규칙
+globs:
+  - deploy/**
+alwaysApply: false
+---
+
+- 환경 차이는 브랜치가 아니라 `deploy/overlays/{local|local-dev|dev|stag|prod}` 로 나눈다. 공통은 `base`. 다른 레포와 맞출 값은 aibms-backend `deploy/README.md` 참고.
+- 비밀값은 매니페스트에 넣지 않는다. 매니페스트는 Secret 을 `envFrom.secretRef` 로 이름만 참조한다.
+  - 키 목록·설명은 비밀값을 쓰는 레포(aibms-backend·aibms-aiagent)의 `deploy/secrets/*.example.yaml` 에. 새 환경변수가 비밀값이면 여기와 aibms-backend `deploy/secrets/README.md` 표에 추가한다.
+  - 값을 넣은 복사본(`deploy/secrets/*.yaml`)은 `.gitignore` 로 커밋되지 않는다. 절대 강제로 추가하지 않는다.
+  - 예외: `deploy/overlays/local` 의 secretGenerator 는 로컬 전용 값이다. 다른 환경에 같은 값을 쓰지 않는다.
+- 비밀이 아닌 설정은 ConfigMap(`aibms-backend-config` 등)에.
+- 바꾼 뒤 `kubectl kustomize deploy/overlays/dev` (stag·prod 도) 로 렌더링이 되는지 확인한다.

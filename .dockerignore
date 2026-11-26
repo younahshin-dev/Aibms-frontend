@@ -1,3 +1,4 @@
 # 이미지 안에서 npm ci 로 새로 설치·빌드한다 (호스트 node_modules 는 OS 가 달라 쓰면 안 됨)
 node_modules
 dist
+deploy
